@@ -6,7 +6,7 @@ import tempfile
 
 import streamlit as st
 
-from casa_inspeccion_a_planilla import procesar
+from casa_inspeccion_a_planilla import detectar_perfil, procesar
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 PLANTILLA = os.path.join(BASE, "plantilla", "planilla_base.xlsx")
@@ -30,7 +30,8 @@ col1, col2 = st.columns([2, 1])
 with col1:
     archivo = st.file_uploader("Informe en PDF", type=["pdf"])
 with col2:
-    formato = st.selectbox("Formato del informe", list(perfiles.keys()))
+    opciones = ["Detectar automáticamente"] + list(perfiles.keys())
+    formato = st.selectbox("Formato del informe", opciones)
 
 if st.button("Generar planilla", type="primary", disabled=archivo is None):
     with st.spinner("Leyendo el informe..."):
@@ -39,8 +40,9 @@ if st.button("Generar planilla", type="primary", disabled=archivo is None):
             salida = os.path.join(tmp, "planilla.xlsx")
             with open(pdf_path, "wb") as f:
                 f.write(archivo.getbuffer())
+            ruta_perfil = None if formato == "Detectar automáticamente" else perfiles[formato]
             try:
-                total, pendientes = procesar(pdf_path, PLANTILLA, salida, perfiles[formato])
+                total, pendientes, nombre_formato = procesar(pdf_path, PLANTILLA, salida, ruta_perfil)
             except ValueError as e:
                 st.error(str(e))
                 st.stop()
@@ -48,6 +50,7 @@ if st.button("Generar planilla", type="primary", disabled=archivo is None):
                 contenido = f.read()
 
     st.success(f"Listo: {total} observaciones cargadas. {len(pendientes)} requieren revisión.")
+    st.caption(f"Formato usado: {nombre_formato}")
     nombre = os.path.splitext(archivo.name)[0] + "_planilla.xlsx"
     st.download_button("Descargar planilla Excel", data=contenido, file_name=nombre,
                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")

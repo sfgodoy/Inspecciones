@@ -14,7 +14,9 @@ Requiere:  pip install pdfplumber openpyxl
 """
 import argparse
 import csv
+import glob
 import json
+import os
 import re
 import sys
 import unicodedata
@@ -224,10 +226,50 @@ def explorar(pdf_path, perfil):
                         print(f"   página {i}: '{linea.strip()}' -> {sec}")
 
 
-def procesar(pdf_path, plantilla, salida, perfil_path):
-    """Carga un informe en la planilla. Devuelve (total_filas, filas_para_revisar: lista de dicts)."""
+CARPETA_PERFILES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "perfiles")
+MINIMO_OBSERVACIONES = 5
+
+
+def leer_con_perfil(pdf_path, perfil):
+    return leer_bloques(pdf_path, perfil) if perfil.tipo == "bloques" else leer_posicional(pdf_path, perfil)
+
+
+def detectar_perfil(pdf_path, carpeta=CARPETA_PERFILES):
+    """Prueba todos los perfiles y devuelve (ruta, nombre, n) del que lea más observaciones válidas.
+    Devuelve None si ninguno reconoce el formato."""
+    mejor = None
+    for ruta in sorted(glob.glob(os.path.join(carpeta, "*.json"))):
+        try:
+            perfil = Perfil(ruta)
+            filas = leer_con_perfil(pdf_path, perfil)
+        except Exception:
+            continue
+        validas = [
+            f for f in filas
+            if recinto_de(perfil, f.get("recinto") or f.get("recinto_heading") or "")
+            and len((f.get("observacion") or "").strip()) > 5
+        ]
+        n = len(validas)
+        if n and (mejor is None or n > mejor[2]):
+            mejor = (ruta, perfil.nombre, n)
+    if mejor and mejor[2] >= MINIMO_OBSERVACIONES:
+        return mejor
+    return None
+
+
+def procesar(pdf_path, plantilla, salida, perfil_path=None):
+    """Carga un informe en la planilla. Si no se indica perfil, lo detecta automáticamente.
+    Devuelve (total_filas, filas_para_revisar, nombre_del_formato)."""
+    if perfil_path is None:
+        detectado = detectar_perfil(pdf_path)
+        if detectado is None:
+            raise ValueError(
+                "No reconocí el formato de este informe. Envíalo al administrador para agregarlo."
+            )
+        perfil_path, nombre_formato, _ = detectado
     perfil = Perfil(perfil_path)
-    filas = leer_bloques(pdf_path, perfil) if perfil.tipo == "bloques" else leer_posicional(pdf_path, perfil)
+    nombre_formato = perfil.nombre
+    filas = leer_con_perfil(pdf_path, perfil)
     if not filas:
         raise ValueError("No se encontraron observaciones. Revisa que el perfil corresponda al informe.")
 
@@ -288,7 +330,7 @@ def procesar(pdf_path, plantilla, salida, perfil_path):
         ws.cell(i, 18, r["comentario"])
     wb.save(salida)
     pendientes = [r for r in registros if r["faltantes"]]
-    return len(registros), pendientes
+    return len(registros), pendientes, nombre_formato
 
 
 def main():
@@ -296,21 +338,24 @@ def main():
     ap.add_argument("pdf")
     ap.add_argument("plantilla", nargs="?")
     ap.add_argument("salida", nargs="?")
-    ap.add_argument("--perfil", required=True)
+    ap.add_argument("--perfil", help="si se omite, el programa detecta el formato solo")
     ap.add_argument("--explorar", action="store_true")
     ap.add_argument("--revisar", help="CSV con las filas que requieren revisión")
     args = ap.parse_args()
 
     if args.explorar:
+        if not args.perfil:
+            ap.error("--explorar requiere --perfil")
         explorar(args.pdf, Perfil(args.perfil))
         return
     if not args.plantilla or not args.salida:
         ap.error("faltan la planilla base y el archivo de salida")
 
     try:
-        total, pendientes = procesar(args.pdf, args.plantilla, args.salida, args.perfil)
+        total, pendientes, formato = procesar(args.pdf, args.plantilla, args.salida, args.perfil)
     except ValueError as e:
         sys.exit(str(e))
+    print(f"Formato: {formato}")
     print(f"Filas escritas: {total}")
     print(f"Filas con [REVISAR]: {len(pendientes)}")
     print(f"Archivo: {args.salida}")
