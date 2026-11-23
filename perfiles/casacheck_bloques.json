@@ -1,0 +1,241 @@
+{
+  "nombre": "CasaCheck - Informe Técnico (inspección clásica, bloques)",
+  "proyecto": "",
+  "tipo_lectura": "bloques",
+  "ignorar_lineas": [
+    "^www\\.casacheck",
+    "(Avenida|Av\\.) La Florida",
+    "La Florida, Región",
+    "^\\s*(ANDRES ORTUZAR|JESUS MATA|JESÚS MATA|JESUS MATA)\\.?\\s*$",
+    "Nº\\s+NIVEL",
+    "^\\s*INFORME DE INSPECCIÓN\\s*$",
+    "FOTOGRAFÍAS",
+    "^\\s*OBSERVACIONES\\s*$"
+  ],
+  "inicio_bloque": "^\\s*(\\d{1,3})\\s+(\\S.*?)\\s*$",
+  "fin_bloques": "^\\s*Plano ubicación",
+  "marca_categoria": "•",
+  "marca_defecto": "−",
+  "encabezados_seccion": [],
+  "secciones": {
+    "rev0": 0
+  },
+  "recinto_reglas": [
+    [
+      "loggia",
+      "LOGGIA / LAVADERO"
+    ],
+    [
+      "acceso",
+      "HALL DE ACCESO"
+    ],
+    [
+      "cocina",
+      "COCINA"
+    ],
+    [
+      "living",
+      "LIVING"
+    ],
+    [
+      "estar",
+      "LIVING"
+    ],
+    [
+      "comedor",
+      "LIVING"
+    ],
+    [
+      "terraza",
+      "TERRAZA"
+    ],
+    [
+      "logia",
+      "LOGGIA / LAVADERO"
+    ],
+    [
+      "pasillo",
+      "PASILLO"
+    ],
+    [
+      "walk in closet",
+      "WALKING CLOSET 1"
+    ],
+    [
+      "baño 1",
+      "BAÑO 1"
+    ],
+    [
+      "baño 2",
+      "BAÑO 2"
+    ],
+    [
+      "dormitorio 1",
+      "DORMITORIO 1"
+    ],
+    [
+      "dormitorio 2",
+      "DORMITORIO 2"
+    ],
+    [
+      "dormitorio 3",
+      "DORMITORIO 3"
+    ],
+    [
+      "lavanderia",
+      "LAVANDERIA"
+    ]
+  ],
+  "problema_reglas": [
+    [
+      "englobad",
+      "DESPEGADO(A)"
+    ],
+    [
+      "despegad",
+      "DESPEGADO(A)"
+    ],
+    [
+      "picad",
+      "PIQUETE"
+    ],
+    [
+      "piquete",
+      "PIQUETE"
+    ],
+    [
+      "mancha",
+      "MANCHADO(A)"
+    ],
+    [
+      "desalinead",
+      "DESALINEADO(A)"
+    ],
+    [
+      "limpieza",
+      "SUCIO(A)"
+    ],
+    [
+      "inadecuad",
+      "IRREGULAR"
+    ],
+    [
+      "mal ejecut",
+      "IRREGULAR"
+    ],
+    [
+      "falta",
+      "FALTA INSTALACION"
+    ],
+    [
+      "fisura",
+      "FISURADO(A)"
+    ],
+    [
+      "rayad",
+      "RAYADO(A)"
+    ],
+    [
+      "humedad",
+      "HUMEDAD"
+    ],
+    [
+      "suelt",
+      "SUELTO(A)"
+    ],
+    [
+      "oxid",
+      "OXIDADO(A)"
+    ],
+    [
+      "no funciona",
+      "NO FUNCIONA"
+    ],
+    [
+      "sopl",
+      "SOPLADO(A)"
+    ],
+    [
+      "sucio",
+      "SUCIO(A)"
+    ]
+  ],
+  "categoria_reglas": [
+    {
+      "claves": [
+        "papel mural"
+      ],
+      "lugar": "MURO ALBAÑILERIA",
+      "item": "PAPEL MURAL"
+    },
+    {
+      "claves": [
+        "rev. de cielo",
+        "cielo"
+      ],
+      "lugar": "CIELO (LOSA)",
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "cornisa"
+      ],
+      "lugar": "CORNISA",
+      "item": "CUERPO CORNISA"
+    },
+    {
+      "claves": [
+        "rev. de piso",
+        "piso"
+      ],
+      "lugar": "PISO",
+      "item": "PAVIMENTO"
+    },
+    {
+      "claves": [
+        "guardapolvo"
+      ],
+      "lugar": "GUARDAPOLVO",
+      "item": "CUERPO GUARDAPOLVO"
+    },
+    {
+      "claves": [
+        "marco"
+      ],
+      "lugar": "PUERTA ABATIR",
+      "item": "MARCO"
+    },
+    {
+      "claves": [
+        "puerta"
+      ],
+      "lugar": "PUERTA ABATIR",
+      "item": "PUERTA"
+    },
+    {
+      "claves": [
+        "rev. de muro",
+        "muro",
+        "pintura",
+        "enlucido"
+      ],
+      "lugar": "MURO ALBAÑILERIA",
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "enchufe"
+      ],
+      "lugar": "ENCHUFE",
+      "item": "ENCHUFE"
+    },
+    {
+      "claves": [
+        "sistema eléctrico",
+        "tablero"
+      ],
+      "lugar": "TABLERO ELECTRICO",
+      "item": "CABLEADO"
+    }
+  ]
+}

@@ -1,0 +1,641 @@
+{
+  "nombre": "TucasaOK - Chequeo de observaciones (posicional)",
+  "proyecto": "",
+  "tipo_lectura": "posicional",
+  "ignorar_lineas": [
+    "tucasaok",
+    "^Nº",
+    "INSPECCIONADO",
+    "CONSTRUCTORA",
+    "IMAGEN",
+    "CHEQUEO",
+    "^Simbolog",
+    "RECINTOS INTERIORES",
+    "^3\\.\\s*$",
+    "^\\d\\.\\d+\\s*$"
+  ],
+  "recinto_encabezado": "^RECINTO\\s+(.+)$",
+  "seccion_recinto": "rev0",
+  "encabezados_seccion": [],
+  "secciones": {
+    "rev0": 0
+  },
+  "campos": [
+    "numero",
+    "elemento",
+    "observacion",
+    "fotos",
+    "estado",
+    "respuesta"
+  ],
+  "columnas_x": [
+    120,
+    185,
+    268,
+    380,
+    500
+  ],
+  "recinto_reglas": [
+    [
+      "cocina",
+      "COCINA"
+    ],
+    [
+      "living",
+      "LIVING"
+    ],
+    [
+      "terraza",
+      "TERRAZA"
+    ],
+    [
+      "logia",
+      "LOGGIA / LAVADERO"
+    ],
+    [
+      "pasillo",
+      "PASILLO"
+    ],
+    [
+      "baño",
+      "BAÑO 1"
+    ],
+    [
+      "dormitorio 1",
+      "DORMITORIO 1"
+    ],
+    [
+      "dormitorio 2",
+      "DORMITORIO 2"
+    ],
+    [
+      "dormitorio 3",
+      "DORMITORIO 3"
+    ],
+    [
+      "acceso",
+      "HALL DE ACCESO"
+    ],
+    [
+      "hall",
+      "HALL DE ACCESO"
+    ]
+  ],
+  "problema_reglas": [
+    [
+      "despegad",
+      "DESPEGADO(A)"
+    ],
+    [
+      "desnivel",
+      "DESNIVELADO(A)"
+    ],
+    [
+      "lomo",
+      "DESNIVELADO(A)"
+    ],
+    [
+      "saltad",
+      "QUEBRADO(A)"
+    ],
+    [
+      "piquete",
+      "PIQUETE"
+    ],
+    [
+      "picad",
+      "PIQUETE"
+    ],
+    [
+      "oxido",
+      "OXIDADO(A)"
+    ],
+    [
+      "óxido",
+      "OXIDADO(A)"
+    ],
+    [
+      "fisur",
+      "FISURADO(A)"
+    ],
+    [
+      "grieta",
+      "FISURADO(A)"
+    ],
+    [
+      "humedad",
+      "HUMEDAD"
+    ],
+    [
+      "suelt",
+      "SUELTO(A)"
+    ],
+    [
+      "rayad",
+      "RAYADO(A)"
+    ],
+    [
+      "rayas",
+      "RAYADO(A)"
+    ],
+    [
+      "cristal con rayas",
+      "RAYADO(A)"
+    ],
+    [
+      "tonalidad",
+      "TONALIDAD"
+    ],
+    [
+      "distinto tono",
+      "TONALIDAD"
+    ],
+    [
+      "cambia de color",
+      "TONALIDAD"
+    ],
+    [
+      "sopl",
+      "SOPLADO(A)"
+    ],
+    [
+      "curvatura",
+      "DEFORMADO(A)"
+    ],
+    [
+      "curvo",
+      "DEFORMADO(A)"
+    ],
+    [
+      "curvad",
+      "DEFORMADO(A)"
+    ],
+    [
+      "deform",
+      "DEFORMADO(A)"
+    ],
+    [
+      "no se cierra",
+      "NO FUNCIONA"
+    ],
+    [
+      "no funciona",
+      "NO FUNCIONA"
+    ],
+    [
+      "no enciende",
+      "NO FUNCIONA"
+    ],
+    [
+      "sucio",
+      "SUCIO(A)"
+    ],
+    [
+      "suciedad",
+      "SUCIO(A)"
+    ],
+    [
+      "manch",
+      "MANCHADO(A)"
+    ],
+    [
+      "desmanch",
+      "MANCHADO(A)"
+    ],
+    [
+      "desmache",
+      "MANCHADO(A)"
+    ],
+    [
+      "dañad",
+      "DAÑADO(A)"
+    ],
+    [
+      "daño",
+      "DAÑADO(A)"
+    ],
+    [
+      "desaliñad",
+      "DESAJUSTADO(A)"
+    ],
+    [
+      "desajust",
+      "DESAJUSTADO(A)"
+    ],
+    [
+      "corta",
+      "DESCUADRADO(A)"
+    ],
+    [
+      "cuadratur",
+      "DESCUADRADO(A)"
+    ],
+    [
+      "descuadr",
+      "DESCUADRADO(A)"
+    ],
+    [
+      "mal instal",
+      "MAL INSTALADO(A)"
+    ],
+    [
+      "fijacion",
+      "MAL INSTALADO(A)"
+    ],
+    [
+      "fijación",
+      "MAL INSTALADO(A)"
+    ],
+    [
+      "sello cortado",
+      "SELLO CORTADO O DEFECTUOSO"
+    ],
+    [
+      "sello abierto",
+      "SELLO CORTADO O DEFECTUOSO"
+    ],
+    [
+      "falta sello",
+      "SELLO CORTADO O DEFECTUOSO"
+    ],
+    [
+      "sello",
+      "SELLO CORTADO O DEFECTUOSO"
+    ],
+    [
+      "falta pintura",
+      "FALTA PINTURA"
+    ],
+    [
+      "falta mano de pintura",
+      "FALTA PINTURA"
+    ],
+    [
+      "falta fragu",
+      "FALTA CUBRIMIENTO"
+    ],
+    [
+      "falta fragu",
+      "FALTA CUBRIMIENTO"
+    ],
+    [
+      "orificios",
+      "FALTA CUBRIMIENTO"
+    ],
+    [
+      "faltan",
+      "FALTA INSTALACION"
+    ],
+    [
+      "falta",
+      "FALTA INSTALACION"
+    ],
+    [
+      "irregular",
+      "IRREGULAR"
+    ],
+    [
+      "mejorar",
+      "IRREGULAR"
+    ],
+    [
+      "uniform",
+      "IRREGULAR"
+    ],
+    [
+      "terminacion",
+      "IRREGULAR"
+    ],
+    [
+      "terminación",
+      "IRREGULAR"
+    ]
+  ],
+  "categoria_reglas": [
+    {
+      "claves": [
+        "palmeta",
+        "pavimento",
+        "piso",
+        "lomos"
+      ],
+      "lugar": "PISO",
+      "item": "PAVIMENTO"
+    },
+    {
+      "claves": [
+        "fragüe",
+        "fragues",
+        "fragües",
+        "fragu"
+      ],
+      "lugar": "PISO",
+      "item": "FRAGUE"
+    },
+    {
+      "claves": [
+        "junta",
+        "dilatacion",
+        "dilatación"
+      ],
+      "lugar": "PISO",
+      "item": "JUNTA DILATACION"
+    },
+    {
+      "claves": [
+        "enchufe",
+        "tierra desconectada"
+      ],
+      "lugar": "ENCHUFE",
+      "item": "ENCHUFE"
+    },
+    {
+      "claves": [
+        "tapa eléctrica",
+        "tapa electrica",
+        "caja electrica",
+        "caja eléctrica"
+      ],
+      "lugar": "CAJA ELECTRICA",
+      "item": "TAPA"
+    },
+    {
+      "claves": [
+        "cielo"
+      ],
+      "lugar": "CIELO (LOSA)",
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "cornisa"
+      ],
+      "lugar": "CORNISA",
+      "item": "CUERPO CORNISA"
+    },
+    {
+      "claves": [
+        "guardapolvo"
+      ],
+      "lugar": "GUARDAPOLVO",
+      "item": "CUERPO GUARDAPOLVO"
+    },
+    {
+      "claves": [
+        "manilla"
+      ],
+      "lugar": "PUERTA ABATIR",
+      "item": "MANILLA"
+    },
+    {
+      "claves": [
+        "bisagra"
+      ],
+      "lugar": "PUERTA ABATIR",
+      "item": "BISAGRA"
+    },
+    {
+      "claves": [
+        "marco"
+      ],
+      "lugar": "PUERTA ABATIR",
+      "item": "MARCO"
+    },
+    {
+      "claves": [
+        "puerta"
+      ],
+      "lugar": "PUERTA ABATIR",
+      "item": "PUERTA"
+    },
+    {
+      "claves": [
+        "cristal",
+        "vidrio"
+      ],
+      "lugar": "VENTANA CORREDERA",
+      "item": "CRISTAL"
+    },
+    {
+      "claves": [
+        "ventanal",
+        "ventana pvc",
+        "marco pvc"
+      ],
+      "lugar": "VENTANA CORREDERA",
+      "item": "SELLO"
+    },
+    {
+      "claves": [
+        "ventana"
+      ],
+      "lugar": "VENTANA ABATIR",
+      "item": "SELLO"
+    },
+    {
+      "claves": [
+        "rasgo"
+      ],
+      "lugar": "RASGO VENTANA",
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "deflector"
+      ],
+      "lugar": "RASGO VENTANA",
+      "item": "TRONERA / VENTILACION"
+    },
+    {
+      "claves": [
+        "retenedor"
+      ],
+      "lugar": "VENTANA ABATIR",
+      "item": "BISAGRA RETEN"
+    },
+    {
+      "claves": [
+        "rejilla"
+      ],
+      "lugar": "VENTILACION",
+      "item": "REJILLA"
+    },
+    {
+      "claves": [
+        "ventilación",
+        "ventilacion"
+      ],
+      "lugar": "VENTILACION",
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "celosía",
+        "celosia"
+      ],
+      "lugar": "CELOSIA",
+      "item": "CELOSIA"
+    },
+    {
+      "claves": [
+        "calefón",
+        "calefon"
+      ],
+      "lugar": "CALEFON",
+      "item": "CONEXIONES"
+    },
+    {
+      "claves": [
+        "soporte de calefón"
+      ],
+      "lugar": "CALEFON",
+      "item": "SOPORTES"
+    },
+    {
+      "claves": [
+        "wc"
+      ],
+      "lugar": "WC",
+      "item": "ESTANQUE"
+    },
+    {
+      "claves": [
+        "lavamanos"
+      ],
+      "lugar": "LAVAMANOS",
+      "item": "SELLO"
+    },
+    {
+      "claves": [
+        "lavaplatos",
+        "fuentón",
+        "fuenton"
+      ],
+      "lugar": "LAVAPLATOS",
+      "item": "SELLO"
+    },
+    {
+      "claves": [
+        "tina"
+      ],
+      "lugar": "TINA",
+      "item": "SELLO"
+    },
+    {
+      "claves": [
+        "extractor"
+      ],
+      "lugar": "EXTRACTOR",
+      "item": "CUERPO EXTRACTOR"
+    },
+    {
+      "claves": [
+        "mueble de cocina",
+        "mueble cocina",
+        "embellecedor"
+      ],
+      "lugar": "ESTRUCTURA MUEBLE COCINA",
+      "item": "MUEBLE"
+    },
+    {
+      "claves": [
+        "closet",
+        "repisa",
+        "repisas"
+      ],
+      "lugar": "ACCESORIO CLOSET",
+      "item": "REPISAS"
+    },
+    {
+      "claves": [
+        "barra de closet",
+        "barra"
+      ],
+      "lugar": "ACCESORIO CLOSET",
+      "item": "BARRA COLGAR"
+    },
+    {
+      "claves": [
+        "colgador"
+      ],
+      "lugar": "ACCESORIO BAÑO",
+      "item": "PERCHA"
+    },
+    {
+      "claves": [
+        "porta rollo",
+        "porta-rollo"
+      ],
+      "lugar": "ACCESORIO BAÑO",
+      "item": "PORTA-ROLLO"
+    },
+    {
+      "claves": [
+        "porta lámpara",
+        "porta lampara",
+        "portalámpara"
+      ],
+      "lugar": "PORTALAMPARA",
+      "item": "CUERPO PORTALAMPARA"
+    },
+    {
+      "claves": [
+        "llave de paso"
+      ],
+      "lugar": "LLAVE DE PASO",
+      "item": "LLAVE DE PASO"
+    },
+    {
+      "claves": [
+        "tapa tornillo",
+        "tapas de tornillos",
+        "tapa de tornillo"
+      ],
+      "lugar": null,
+      "item": "TAPA TORNILLO"
+    },
+    {
+      "claves": [
+        "tapa ciega"
+      ],
+      "lugar": "TAPA CIEGA",
+      "item": "TAPA"
+    },
+    {
+      "claves": [
+        "tapa wc"
+      ],
+      "lugar": "WC",
+      "item": "TAPA"
+    },
+    {
+      "claves": [
+        "tapa"
+      ],
+      "lugar": null,
+      "item": "TAPA"
+    },
+    {
+      "claves": [
+        "muro"
+      ],
+      "lugar": "MURO ALBAÑILERIA",
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "pintura"
+      ],
+      "lugar": null,
+      "item": "PINTURA"
+    },
+    {
+      "claves": [
+        "sello"
+      ],
+      "lugar": null,
+      "item": "SELLO"
+    }
+  ],
+  "fin_bloques": "ATENTAMENTE|acta de entrega|CONCLUSIONES|RECINTO EXTERIOR"
+}
