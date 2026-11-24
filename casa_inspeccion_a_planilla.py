@@ -257,38 +257,69 @@ def detectar_perfil(pdf_path, carpeta=CARPETA_PERFILES):
     return None
 
 
-def procesar(pdf_path, plantilla, salida, perfil_path=None):
-    """Carga un informe en la planilla. Si no se indica perfil, lo detecta automáticamente.
-    Devuelve (total_filas, filas_para_revisar, nombre_del_formato)."""
-    if perfil_path is None:
-        detectado = detectar_perfil(pdf_path)
-        if detectado is None:
-            raise ValueError(
-                "No reconocí el formato de este informe. Envíalo al administrador para agregarlo."
-            )
-        perfil_path, nombre_formato, _ = detectado
-    perfil = Perfil(perfil_path)
-    nombre_formato = perfil.nombre
-    filas = leer_con_perfil(pdf_path, perfil)
-    if not filas:
-        raise ValueError("No se encontraron observaciones. Revisa que el perfil corresponda al informe.")
-
-    wb = openpyxl.load_workbook(plantilla)
-
+def _catalogos(wb):
     def catalogo(nombre):
         ws = wb[nombre]
         return {str(ws.cell(r, 2).value).strip(): ws.cell(r, 1).value
                 for r in range(2, ws.max_row + 1) if ws.cell(r, 2).value}
+    return {"rec": catalogo("Recinto"), "lug": catalogo("Lugar"),
+            "item": catalogo("Item"), "prob": catalogo("Problema")}
 
-    cat = {"rec": catalogo("Recinto"), "lug": catalogo("Lugar"),
-           "item": catalogo("Item"), "prob": catalogo("Problema")}
 
+def _escribir_planilla(wb, salida, proyecto, registros, cat):
     def codigo(tipo, nombre):
         if not nombre:
             return None
-        if nombre not in cat[tipo]:
-            raise ValueError(f"'{nombre}' no existe en el catálogo '{tipo}'. Corrige el perfil.")
         return cat[tipo][nombre]
+
+    ws = wb["Requerimientos"]
+    if ws.max_row >= 3:
+        ws.delete_rows(3, ws.max_row - 2)
+    for i, r in enumerate(registros, start=3):
+        ws.cell(i, 1, proyecto)
+        ws.cell(i, 8, codigo("rec", r["rec"]))
+        ws.cell(i, 9, codigo("lug", r["lugar"]))
+        ws.cell(i, 10, codigo("item", r["item"]))
+        ws.cell(i, 11, codigo("prob", r["prob"]))
+        ws.cell(i, 12, r["desc"])
+        ws.cell(i, 18, r["comentario"])
+    wb.save(salida)
+    return [r for r in registros if r["faltantes"]]
+
+
+def _registro(orden_extra, etiqueta, rec, lugar, item, prob, desc, comentario_partes):
+    faltantes = [n for n, v in (("Recinto", rec), ("Lugar", lugar), ("Item", item), ("Problema", prob)) if not v]
+    comentario = list(comentario_partes)
+    if faltantes:
+        comentario.append("[REVISAR: " + ", ".join(faltantes) + "]")
+    return {
+        "orden": (rec or "ZZZ",) + orden_extra,
+        "rec": rec, "lugar": lugar, "item": item, "prob": prob,
+        "desc": desc, "comentario": " ".join(comentario) or None,
+        "etiqueta": etiqueta, "faltantes": faltantes,
+    }
+
+
+def procesar(pdf_path, plantilla, salida, perfil_path=None, api_key=None):
+    """Carga un informe en la planilla.
+    1) Si se indica perfil, lo usa. Si no, prueba los perfiles conocidos.
+    2) Si ninguno reconoce el formato, usa la lectura general con IA (requiere api_key).
+    Devuelve (total_filas, filas_para_revisar, nombre_del_formato)."""
+    wb = openpyxl.load_workbook(plantilla)
+    cat = _catalogos(wb)
+
+    if perfil_path is None:
+        detectado = detectar_perfil(pdf_path)
+        if detectado:
+            perfil_path = detectado[0]
+
+    if perfil_path is None:
+        return _procesar_con_ia(pdf_path, wb, salida, cat, api_key)
+
+    perfil = Perfil(perfil_path)
+    filas = leer_con_perfil(pdf_path, perfil)
+    if not filas:
+        raise ValueError("No se encontraron observaciones con el perfil elegido.")
 
     registros = []
     for f in filas:
@@ -299,38 +330,38 @@ def procesar(pdf_path, plantilla, salida, perfil_path=None):
         else:
             cat_txt = f.get("elemento") or f.get("categoria") or obs
             prob_txt = obs
-        rec = recinto_de(perfil, recinto_txt)
         lugar, item = categoria_de(perfil, cat_txt)
-        prob = problema_de(perfil, prob_txt)
-        faltantes = [n for n, v in (("Recinto", rec), ("Lugar", lugar), ("Item", item), ("Problema", prob)) if not v]
-        comentario = []
-        for campo, etiqueta in (("estado", "Chequeo"), ("respuesta", "Respuesta")):
-            if f.get(campo):
-                comentario.append(f"{etiqueta}: {f[campo]}")
-        if faltantes:
-            comentario.append("[REVISAR: " + ", ".join(faltantes) + "]")
-        registros.append({
-            "orden": (rec or "ZZZ", f["sec"], f["num"], f["label"]),
-            "rec": rec, "lugar": lugar, "item": item, "prob": prob,
-            "desc": obs, "comentario": " ".join(comentario) or None,
-            "etiqueta": f["label"], "faltantes": faltantes,
-        })
+        partes = [f"{e}: {f[c]}" for c, e in (("estado", "Chequeo"), ("respuesta", "Respuesta")) if f.get(c)]
+        registros.append(_registro(
+            (f["sec"], f["num"], f["label"]), f["label"],
+            recinto_de(perfil, recinto_txt), lugar, item, problema_de(perfil, prob_txt),
+            obs, partes,
+        ))
     registros.sort(key=lambda r: r["orden"])
+    pendientes = _escribir_planilla(wb, salida, perfil.proyecto, registros, cat)
+    return len(registros), pendientes, perfil.nombre
 
-    ws = wb["Requerimientos"]
-    if ws.max_row >= 3:
-        ws.delete_rows(3, ws.max_row - 2)
-    for i, r in enumerate(registros, start=3):
-        ws.cell(i, 1, perfil.proyecto)
-        ws.cell(i, 8, codigo("rec", r["rec"]))
-        ws.cell(i, 9, codigo("lug", r["lugar"]))
-        ws.cell(i, 10, codigo("item", r["item"]))
-        ws.cell(i, 11, codigo("prob", r["prob"]))
-        ws.cell(i, 12, r["desc"])
-        ws.cell(i, 18, r["comentario"])
-    wb.save(salida)
-    pendientes = [r for r in registros if r["faltantes"]]
-    return len(registros), pendientes, nombre_formato
+
+def _procesar_con_ia(pdf_path, wb, salida, cat, api_key):
+    from lector_ia import extraer_con_ia
+
+    catalogos = {
+        "recinto": list(cat["rec"].keys()), "lugar": list(cat["lug"].keys()),
+        "item": list(cat["item"].keys()), "problema": list(cat["prob"].keys()),
+    }
+    obs_ia = extraer_con_ia(pdf_path, catalogos, api_key=api_key)
+    if not obs_ia:
+        raise ValueError("No encontré observaciones en este informe, ni con el lector general.")
+    registros = []
+    for n, o in enumerate(obs_ia, start=1):
+        etiqueta = o["numero"] or str(n)
+        registros.append(_registro(
+            (0, n, etiqueta), etiqueta, o["recinto"], o["lugar"], o["item"], o["problema"],
+            o["observacion"], [f"Respuesta: {o['respuesta']}"] if o["respuesta"] else [],
+        ))
+    registros.sort(key=lambda r: r["orden"])
+    pendientes = _escribir_planilla(wb, salida, "", registros, cat)
+    return len(registros), pendientes, "Lectura general (IA)"
 
 
 def main():
@@ -352,7 +383,8 @@ def main():
         ap.error("faltan la planilla base y el archivo de salida")
 
     try:
-        total, pendientes, formato = procesar(args.pdf, args.plantilla, args.salida, args.perfil)
+        total, pendientes, formato = procesar(args.pdf, args.plantilla, args.salida, args.perfil,
+                                              api_key=os.environ.get("ANTHROPIC_API_KEY"))
     except ValueError as e:
         sys.exit(str(e))
     print(f"Formato: {formato}")

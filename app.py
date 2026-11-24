@@ -42,7 +42,9 @@ if st.button("Generar planilla", type="primary", disabled=archivo is None):
                 f.write(archivo.getbuffer())
             ruta_perfil = None if formato == "Detectar automáticamente" else perfiles[formato]
             try:
-                total, pendientes, nombre_formato = procesar(pdf_path, PLANTILLA, salida, ruta_perfil)
+                api_key = st.secrets.get("ANTHROPIC_API_KEY", None) if hasattr(st, "secrets") else None
+                total, pendientes, nombre_formato = procesar(
+                    pdf_path, PLANTILLA, salida, ruta_perfil, api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"))
             except ValueError as e:
                 st.error(str(e))
                 st.stop()
